@@ -1,0 +1,22 @@
+#!/bin/bash
+
+#SBATCH --gres=gpu:1 --cpus-per-task=4 -t 24:00:00 --mail-type=NONE,TIME_LIMIT_80 
+
+. $HOME/anaconda3/etc/profile.d/conda.sh
+conda env remove --name bumblebee_test -y
+rm -rf /userhome/cs3/zhchi/anaconda3/envs/bumblebee_test
+conda env create -f environment_nobuild.yml
+conda activate bumblebee_test
+
+# rm -rf bazel-bin
+# rm -rf bazel-OpenBumbleBee
+# rm -rf bazel-out
+# rm -rf bazel-testlogs
+
+
+# bazel build -c opt examples/python/ml/flax_bert_dataset/...
+# bazel run -c opt examples/python/ml/flax_bert_dataset -- --model_path `pwd`/examples/pretrained/bert_acc73.7_epoch14_boolqnegnoi.pth
+
+
+# conda env export > environment.yml
+# conda env export --no-builds > environment_nobuild.yml
