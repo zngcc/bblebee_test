@@ -4,7 +4,7 @@
 To create an environment, run:
 
 ```
-. $HOME/anaconda3/etc/profile.d/conda.sh
+#. $HOME/anaconda3/etc/profile.d/conda.sh
 
 conda env create -f environment.yml
 conda activate bumblebee_test
@@ -61,30 +61,22 @@ def __call__(self, op_val_index, acc_val_index):
      #return (select(pick_op_val, op_val, acc_val),
      #       select(pick_op_index, op_index, acc_index))
 ```
-
-### 3. Build the Main Programs 
+### 3. Run Microbenchmarks
 
 ```sh
-bazel build -c opt examples/python/ml/flax_gpt2/...
-bazel build -c opt examples/python/ml/flax_bert/...
-bazel build -c opt examples/python/ml/flax_vit/...
+bazel build -c opt examples/python/ml/microbench/gelu
+bazel run -c opt examples/python/microbench:gelu
 ```
 
-It might take some times to fetch the dependencies.
+### 4. Build and Run the Main Program
+
+```sh
+bazel build -c opt examples/python/ml/flax_bert_dataset/...
+bazel run -c opt examples/python/ml/flax_bert_dataset -- --model_path `pwd`/examples/pretrained/xxx.pth
 
 ```
-INFO: Elapsed time: 403.615s, Critical Path: 277.54s
-INFO: 3686 processes: 223 internal, 3463 linux-sandbox.
-INFO: Build completed successfully, 3686 total actions
-```
 
-## Run Microbenchmarks
 
-* `bazel run -c opt examples/python/microbench:gelu`
-
-* `bazel run -c opt examples/python/microbench:softmax`
-
-* `bazel run -c opt examples/python/microbench:matmul`
 
 
 

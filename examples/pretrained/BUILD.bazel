@@ -17,7 +17,7 @@ package(default_visibility = ["//visibility:public"])
 filegroup(
     name = "pretrained",
     srcs = [
-        "bert_acc70.8_epoch9.pth",
+        "bert_acc70.8_epoch14_boolpure.pth",
         "bert_acc72.9_epoch14_boolqpure.pth",
         "bert_acc73.7_epoch14_boolqnegnoi.pth",
 
