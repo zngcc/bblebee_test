@@ -11,7 +11,7 @@ conda activate bumblebee_test
 ```
 
 ### 2. Modify Some Python Codes
-ttttttttttttttt
+
 **Why?** In SPU, we apply a Python hijack like [this](examples/python/ml/flax_bert/flax_bert.py#L68) to replace the entire activation calls with our MPC protocols.
 This hijack provides a simpler alternative to IR rewriting. Pattern matching all IR operations for complex activation functions, such as GeLU, is a tedious task. For the softmax function, we can easily apply this Python hijack. However, for the GeLU/SILU activations, we unfortunately need to modify the HuggingFace source code. This is because the activation calls used by HuggingFace are not Python calls but C pointer functions.
 
