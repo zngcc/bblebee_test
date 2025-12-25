@@ -12,8 +12,6 @@ conda activate bumblebee_test
 
 ### 2. Modify Some Python Codes
 
-**Why?** In SPU, we apply a Python hijack like [this](examples/python/ml/flax_bert/flax_bert.py#L68) to replace the entire activation calls with our MPC protocols.
-This hijack provides a simpler alternative to IR rewriting. Pattern matching all IR operations for complex activation functions, such as GeLU, is a tedious task. For the softmax function, we can easily apply this Python hijack. However, for the GeLU/SILU activations, we unfortunately need to modify the HuggingFace source code. This is because the activation calls used by HuggingFace are not Python calls but C pointer functions.
 
 ```python
 # transformers/models/gpt2/modeling_flax_gpt2.py#297
@@ -61,7 +59,8 @@ def __call__(self, op_val_index, acc_val_index):
      #return (select(pick_op_val, op_val, acc_val),
      #       select(pick_op_index, op_index, acc_index))
 ```
-### 3. Run Microbenchmarks
+
+### 3. Build Run Microbenchmarks
 
 ```sh
 bazel build -c opt examples/python/ml/microbench/gelu
@@ -69,6 +68,9 @@ bazel run -c opt examples/python/microbench:gelu
 ```
 
 ### 4. Build and Run the Main Program
+Download model weights (.pth format) and put them in "./examples/pretrained".
+
+Run: 
 
 ```sh
 bazel build -c opt examples/python/ml/flax_bert_dataset/...
@@ -77,11 +79,8 @@ bazel run -c opt examples/python/ml/flax_bert_dataset -- --model_path `pwd`/exam
 ```
 
 
+## This Rep is copy from "BumbleBee: Secure Two-party Inference Framework for Large Transformers" [paper](https://eprint.iacr.org/2023/1678) and their repos: [BumbleBee](https://github.com/AntCPLab/OpenBumbleBee). We fix some package version problem for test.
 
-
-
-
-## This Rep is Built on: BumbleBee: Secure Two-party Inference Framework for Large Transformers[paper](https://eprint.iacr.org/2023/1678).
 
 ```tex
 @inproceedings{DBLP:conf/ndss/LuHGLLRHWC25,
