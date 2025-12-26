@@ -11,7 +11,7 @@ conda activate bumblebee_test
 ```
 
 ### 2. Modify Some Python Codes
-
+If using conda, the packages files are in "/bumblebee_test/lib/python3.10/site-packages/".
 
 ```python
 # transformers/models/gpt2/modeling_flax_gpt2.py#297
@@ -38,26 +38,23 @@ def __call__(self, hidden_states):
     return hidden_states
 ```
 
-Also, we can skip some computation in JAX's argmax function. 
-This can reduce some cost in the one-hot encoding (e.g., embedding lookup).
-
 ```python
-#jax/_src/lax/lax.py#4118
-def __call__(self, op_val_index, acc_val_index):
-     op_val, op_index = op_val_index
-     acc_val, acc_index = acc_val_index
-     pick_op_val = self._value_comparator(op_val, acc_val)
-     return (select(pick_op_val, op_val, acc_val),
+#jax/_src/lax/lax.py#3800
+  def reducer_fn(op_val_index, acc_val_index):
+    op_val, op_index = op_val_index
+    acc_val, acc_index = acc_val_index
+    pick_op_val = self._value_comparator(op_val, acc_val)
+    return (select(pick_op_val, op_val, acc_val),
             select(pick_op_val, op_index, acc_index))
-     # Pick op_val if Lt (for argmin) or if NaN
-     #pick_op_val = bitwise_or(self._value_comparator(op_val, acc_val),
-     #                          ne(op_val, op_val))
-     # If x and y are not NaN and x = y, then pick the first
-     #pick_op_index = bitwise_or(pick_op_val,
-     #                           bitwise_and(eq(op_val, acc_val),
-     #                           lt(op_index, acc_index)))
-     #return (select(pick_op_val, op_val, acc_val),
-     #       select(pick_op_index, op_index, acc_index))
+    # Pick op_val if Lt (for argmin) or if NaN
+    # pick_op_val = bitwise_or(value_comparator(op_val, acc_val),
+    #                          ne(op_val, op_val))
+    # # If x and y are not NaN and x = y, then pick the first
+    # pick_op_index = bitwise_or(pick_op_val,
+    #                            bitwise_and(eq(op_val, acc_val),
+    #                                        lt(op_index, acc_index)))
+    # return (select(pick_op_val, op_val, acc_val),
+    #         select(pick_op_index, op_index, acc_index))
 ```
 
 ### 3. Build Run Microbenchmarks
